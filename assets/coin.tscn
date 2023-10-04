@@ -1,0 +1,93 @@
+[gd_scene load_steps=11 format=3 uid="uid://t8nui5en86cb"]
+
+[ext_resource type="Script" path="res://scripts/Coin.gd" id="1_bi4l6"]
+[ext_resource type="Texture2D" uid="uid://cxafk1mhs83r6" path="res://assets/sprites/coin/gold_1.png" id="2_paepk"]
+[ext_resource type="Texture2D" uid="uid://bn3bwkemnbeb5" path="res://assets/sprites/coin/gold_2.png" id="3_fhwr5"]
+[ext_resource type="Texture2D" uid="uid://d3tr7gcbebouq" path="res://assets/sprites/coin/gold_3.png" id="4_xxoi8"]
+[ext_resource type="AudioStream" uid="uid://detwfcfvufwtk" path="res://assets/sounds/powerUp2.ogg" id="5_fjary"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_uipli"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_paepk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_fhwr5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_xxoi8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_fhwr5")
+}],
+"loop": true,
+"name": &"spin",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wuu0k"]
+radius = 48.0
+
+[sub_resource type="Animation" id="Animation_pmfb3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_jiw7w"]
+resource_name = "bounce"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, -64), Vector2(0, -64), Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ogcgp"]
+_data = {
+"RESET": SubResource("Animation_pmfb3"),
+"bounce": SubResource("Animation_jiw7w")
+}
+
+[node name="Coin" type="Area2D"]
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("1_bi4l6")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_uipli")
+animation = &"spin"
+autoplay = "spin"
+frame_progress = 0.339665
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_wuu0k")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_ogcgp")
+}
+
+[node name="SoundCollect" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_fjary")
+pitch_scale = 1.55
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

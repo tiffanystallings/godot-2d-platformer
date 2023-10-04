@@ -1,0 +1,83 @@
+[gd_scene load_steps=10 format=3 uid="uid://dv3o5yos8v32a"]
+
+[ext_resource type="Script" path="res://scripts/Enemy.gd" id="1_uol1p"]
+[ext_resource type="Texture2D" uid="uid://1ksun888x3fm" path="res://assets/sprites/enemies/slimeBlue_squashed.png" id="2_vrsqo"]
+[ext_resource type="Texture2D" uid="uid://c5xsqkt7ykf2m" path="res://assets/sprites/enemies/slimeBlue.png" id="3_q22m0"]
+[ext_resource type="Texture2D" uid="uid://b4hdapr08sv57" path="res://assets/sprites/enemies/slimeBlue_blue.png" id="4_b6wxt"]
+[ext_resource type="AudioStream" uid="uid://co4qdva4o6dbs" path="res://assets/sounds/confirmation_001.ogg" id="5_cwx63"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_12e8e"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_vrsqo")
+}],
+"loop": true,
+"name": &"squash",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_q22m0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_b6wxt")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 3.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c31rd"]
+size = Vector2(38, 25)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_78q6b"]
+size = Vector2(36, 7)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r36pi"]
+size = Vector2(49, 22)
+
+[node name="Enemy" type="CharacterBody2D"]
+collision_layer = 16
+collision_mask = 51
+script = ExtResource("1_uol1p")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_12e8e")
+animation = &"walk"
+frame_progress = 0.0991997
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4.5)
+shape = SubResource("RectangleShape2D_c31rd")
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(0, 20)
+collision_mask = 3
+
+[node name="top_checker" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 34
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="top_checker"]
+position = Vector2(0, -12.5)
+shape = SubResource("RectangleShape2D_78q6b")
+
+[node name="sides_checker" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 34
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="sides_checker"]
+position = Vector2(0.5, 7)
+shape = SubResource("RectangleShape2D_r36pi")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="SoundSquashed" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_cwx63")
+volume_db = -12.18
+
+[connection signal="body_entered" from="top_checker" to="." method="_on_top_checker_body_entered"]
+[connection signal="body_entered" from="sides_checker" to="." method="_on_sides_checker_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

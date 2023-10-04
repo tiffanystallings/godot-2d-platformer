@@ -1,0 +1,83 @@
+[gd_scene load_steps=10 format=3 uid="uid://cmiit340s8b4l"]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_c0gwv"]
+[ext_resource type="SpriteFrames" uid="uid://pr3gfpmr5aou" path="res://assets/player_sprite_frames.tres" id="1_ob2br"]
+[ext_resource type="AudioStream" uid="uid://l811mqsku5w2" path="res://assets/sounds/jump1.ogg" id="3_f0geh"]
+[ext_resource type="AudioStream" uid="uid://co4qdva4o6dbs" path="res://assets/sounds/confirmation_001.ogg" id="4_0xie2"]
+[ext_resource type="AudioStream" uid="uid://dis443rc6yoq5" path="res://assets/sounds/powerUp12.ogg" id="5_o0jk1"]
+
+[sub_resource type="Animation" id="Animation_y31cy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_47uvp"]
+resource_name = "flash"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 0.223529, 0.270588, 0.627451), Color(1, 1, 1, 1), Color(1, 0.223529, 0.270588, 0.627451), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_pc7q0"]
+_data = {
+"RESET": SubResource("Animation_y31cy"),
+"flash": SubResource("Animation_47uvp")
+}
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2stkb"]
+radius = 27.0
+height = 68.0
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_c0gwv")
+metadata/_edit_group_ = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Sprite2D")
+libraries = {
+"": SubResource("AnimationLibrary_pc7q0")
+}
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("1_ob2br")
+animation = &"walk"
+frame_progress = 0.316149
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 14)
+shape = SubResource("CapsuleShape2D_2stkb")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="SoundJump" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_f0geh")
+volume_db = -20.0
+pitch_scale = 0.82
+
+[node name="SoundBounce" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_0xie2")
+volume_db = -12.18
+
+[node name="SoundOuch" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_o0jk1")
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

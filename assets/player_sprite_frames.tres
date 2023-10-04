@@ -1,0 +1,58 @@
+[gd_resource type="SpriteFrames" load_steps=8 format=3 uid="uid://pr3gfpmr5aou"]
+
+[ext_resource type="Texture2D" uid="uid://vrow2sp4mxxa" path="res://assets/sprites/player/platformChar_jump.png" id="1_sfnwt"]
+[ext_resource type="Texture2D" uid="uid://3jg7inq3pkrj" path="res://assets/sprites/player/platformChar_climb1.png" id="2_6qyaa"]
+[ext_resource type="Texture2D" uid="uid://b0cya5eaq2y6s" path="res://assets/sprites/player/platformChar_climb2.png" id="3_odw3e"]
+[ext_resource type="Texture2D" uid="uid://djwnnisol7s64" path="res://assets/sprites/player/platformChar_duck.png" id="4_j1bf7"]
+[ext_resource type="Texture2D" uid="uid://cfplcd50pw81" path="res://assets/sprites/player/platformChar_idle.png" id="5_2f2hi"]
+[ext_resource type="Texture2D" uid="uid://fg1v06uun2aw" path="res://assets/sprites/player/platformChar_walk1.png" id="6_jc1tg"]
+[ext_resource type="Texture2D" uid="uid://bx21acd4tg7aa" path="res://assets/sprites/player/platformChar_walk2.png" id="7_py32w"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_sfnwt")
+}],
+"loop": true,
+"name": &"air",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_6qyaa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_odw3e")
+}],
+"loop": true,
+"name": &"climb",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_j1bf7")
+}],
+"loop": true,
+"name": &"crouch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_2f2hi")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_jc1tg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_py32w")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
