@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/jingles_PIZZA07.ogg-0bd203f886f8ef1f1694edd9b
 [params]
 
 loop=false
-loop_offset=0
-bpm=0
+loop_offset=0.0
+bpm=0.0
 beat_count=0
 bar_beats=4

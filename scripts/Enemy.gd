@@ -5,7 +5,7 @@ enum DIRECTION {LEFT = -1, RIGHT = 1}
 @export() var direction: DIRECTION = DIRECTION.LEFT
 @export() var detects_cliffs: bool = true
 
-const FALL_SPEED = 30
+var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var speed = 50
 
 func set_raycast_pos():
@@ -32,7 +32,7 @@ func _physics_process(delta):
 		change_direction()
 		
 	move_and_slide()
-	velocity.y += FALL_SPEED
+	velocity.y += gravity * delta
 	velocity.x = speed * direction
 
 func _on_fall_zone_body_entered(body):
