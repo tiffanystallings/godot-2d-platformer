@@ -9,9 +9,13 @@ const JUMP_FORCE = -800
 
 var state: State = State.AIR
 var direction: int
+var sprint: bool
+var jump: bool
 
 func _physics_process(delta):
 	direction = Input.get_axis("ui_left", "ui_right")
+	sprint = Input.is_action_pressed("sprint")
+	jump = Input.is_action_just_pressed("ui_up")
 	
 	match(state):
 		State.AIR:
@@ -29,14 +33,14 @@ func _physics_process(delta):
 				state = State.AIR
 			else:
 				if direction:
-					var speed = RUN_SPEED if Input.is_action_pressed("sprint") else MOV_SPEED
+					var speed = RUN_SPEED if sprint else MOV_SPEED
 					$Sprite2D.play("walk", float(speed)/float(MOV_SPEED))
 					handle_move_x(delta, speed)
 				else:
 					$Sprite2D.play("idle")
 					handle_stop_x(delta)
 				
-				if Input.is_action_just_pressed("ui_up"):
+				if jump:
 					state = State.AIR
 					handle_jump()
 					
@@ -59,7 +63,7 @@ func move_and_fall(delta):
 
 func handle_jump(force = JUMP_FORCE):
 	$SoundJump.play()
-	velocity.y = JUMP_FORCE
+	velocity.y = force
 
 func handle_move_x(delta, speed = MOV_SPEED):
 	var step = 0.1 if velocity.x < speed else 0.03
