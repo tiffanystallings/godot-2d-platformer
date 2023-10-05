@@ -60,11 +60,15 @@ func _on_top_checker_body_entered(body):
 	$Timer.start()
 
 func _on_sides_checker_body_entered(body):
-	#get_tree().change_scene_to_file("res://level_1.tscn")
-	if body.position.x < position.x:
-		body.ouch(DIRECTION.LEFT)
-	elif body.position.x > position.x:
-		body.ouch(DIRECTION.RIGHT)
+	if body.get_collision_layer_value(2):
+		if body.position.x < position.x:
+			body.ouch(DIRECTION.LEFT)
+		elif body.position.x > position.x:
+			body.ouch(DIRECTION.RIGHT)
+	
+	elif body.get_collision_layer_value(6):
+		body.queue_free()
+		queue_free()
 
 func _on_timer_timeout():
 	queue_free()

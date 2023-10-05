@@ -2,20 +2,25 @@ extends CharacterBody2D
 
 enum State {AIR, FLOOR, LADDER, WALL}
 
-const MOV_SPEED = 300
-const RUN_SPEED = 500
-const FALL_SPEED = 30
-const JUMP_FORCE = -800
+const MOV_SPEED: int = 300
+const RUN_SPEED: int = 500
+const FALL_SPEED: int = 30
+const JUMP_FORCE: int = -800
+const FIREBALL: PackedScene = preload("res://assets/fireball.tscn")
+const FIREBALL_OFFSET_X = 25
+const FIREBALL_OFFSET_Y = 25
 
 var state: State = State.AIR
 var direction: int
-var sprint: bool
-var jump: bool
+var sprinting: bool
+var jumping: bool
+var firing: bool
 
 func _physics_process(delta):
 	direction = Input.get_axis("ui_left", "ui_right")
-	sprint = Input.is_action_pressed("sprint")
-	jump = Input.is_action_just_pressed("ui_up")
+	sprinting = Input.is_action_pressed("sprint")
+	jumping = Input.is_action_just_pressed("ui_up")
+	firing = Input.is_action_just_pressed("fire")
 	
 	match(state):
 		State.AIR:
@@ -27,22 +32,28 @@ func _physics_process(delta):
 					handle_move_x(delta)
 				else:
 					handle_stop_x(delta)
+				
+				if firing:
+					fire()
 		
 		State.FLOOR:
 			if not is_on_floor():
 				state = State.AIR
 			else:
 				if direction:
-					var speed = RUN_SPEED if sprint else MOV_SPEED
+					var speed = RUN_SPEED if sprinting else MOV_SPEED
 					$Sprite2D.play("walk", float(speed)/float(MOV_SPEED))
 					handle_move_x(delta, speed)
 				else:
 					$Sprite2D.play("idle")
 					handle_stop_x(delta)
 				
-				if jump:
+				if jumping:
 					state = State.AIR
 					handle_jump()
+				
+				if firing:
+					fire()
 					
 		State.LADDER:
 			pass
@@ -55,6 +66,16 @@ func _physics_process(delta):
 func _on_fall_zone_body_entered(body):
 	if body == self:
 		get_tree().change_scene_to_file("res://game_over.tscn")
+		
+func get_direction():
+	return -1 if $Sprite2D.is_flipped_h() else 1
+
+func fire():
+	var fireball = FIREBALL.instantiate()
+	fireball.set_direction(get_direction())
+	fireball.position.y = position.y + FIREBALL_OFFSET_Y
+	fireball.position.x = position.x + (get_direction() * FIREBALL_OFFSET_X)
+	get_parent().add_child(fireball)
 		
 func move_and_fall(delta):
 	var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")

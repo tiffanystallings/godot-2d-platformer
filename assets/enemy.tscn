@@ -32,14 +32,14 @@ animations = [{
 size = Vector2(38, 25)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_78q6b"]
-size = Vector2(36, 7)
+size = Vector2(36, 10)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_r36pi"]
-size = Vector2(49, 22)
+size = Vector2(49, 23)
 
 [node name="Enemy" type="CharacterBody2D"]
 collision_layer = 16
-collision_mask = 51
+collision_mask = 19
 script = ExtResource("1_uol1p")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -57,10 +57,10 @@ collision_mask = 3
 
 [node name="top_checker" type="Area2D" parent="."]
 collision_layer = 16
-collision_mask = 34
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="top_checker"]
-position = Vector2(0, -12.5)
+position = Vector2(0, -11)
 shape = SubResource("RectangleShape2D_78q6b")
 
 [node name="sides_checker" type="Area2D" parent="."]
@@ -68,7 +68,7 @@ collision_layer = 16
 collision_mask = 34
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="sides_checker"]
-position = Vector2(0.5, 7)
+position = Vector2(0.5, 6.5)
 shape = SubResource("RectangleShape2D_r36pi")
 
 [node name="Timer" type="Timer" parent="."]
