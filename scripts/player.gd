@@ -1,52 +1,86 @@
 extends CharacterBody2D
 
-const MOV_SPEED = 400
-const FALL_SPEED = 30
-const JUMP_FORCE = -1000
+enum State {AIR, FLOOR, LADDER, WALL}
 
-func _physics_process(_delta):
-	if (Input.is_action_pressed("ui_right") and Input.is_action_pressed("ui_left")):
-		velocity.x = lerp(velocity.x, 0.0, 0.2)
-		$Sprite2D.play("idle")
+const MOV_SPEED = 300
+const RUN_SPEED = 500
+const FALL_SPEED = 30
+const JUMP_FORCE = -800
+
+var state: State = State.AIR
+var direction: int
+
+func _physics_process(delta):
+	direction = Input.get_axis("ui_left", "ui_right")
+	
+	match(state):
+		State.AIR:
+			if is_on_floor():
+				state = State.FLOOR
+			else:
+				$Sprite2D.play("air")
+				if direction:
+					handle_move_x(delta)
+				else:
+					handle_stop_x(delta)
 		
-	elif (Input.is_action_pressed("ui_right")):
-		$Sprite2D.set_flip_h(false)
-		$Sprite2D.play("walk")
-		velocity.x = MOV_SPEED
+		State.FLOOR:
+			if not is_on_floor():
+				state = State.AIR
+			else:
+				if direction:
+					var speed = RUN_SPEED if Input.is_action_pressed("sprint") else MOV_SPEED
+					$Sprite2D.play("walk", float(speed)/float(MOV_SPEED))
+					handle_move_x(delta, speed)
+				else:
+					$Sprite2D.play("idle")
+					handle_stop_x(delta)
+				
+				if Input.is_action_just_pressed("ui_up"):
+					state = State.AIR
+					handle_jump()
+					
+		State.LADDER:
+			pass
 		
-	elif (Input.is_action_pressed("ui_left")):
-		$Sprite2D.set_flip_h(true)
-		$Sprite2D.play("walk")
-		velocity.x = -MOV_SPEED
+		State.WALL:
+			pass
 	
-	else:
-		velocity.x = lerp(velocity.x, 0.0, 0.2)
-		$Sprite2D.play("idle")
-	
-	if not is_on_floor():
-		$Sprite2D.play("air")
-	
-	if (Input.is_action_just_pressed("ui_up") and is_on_floor()):
-		$SoundJump.play()
-		velocity.y = JUMP_FORCE
-	
-	velocity.y += FALL_SPEED
-	
-	move_and_slide()
+	move_and_fall(delta)
 
 func _on_fall_zone_body_entered(body):
 	if body == self:
 		get_tree().change_scene_to_file("res://game_over.tscn")
+		
+func move_and_fall(delta):
+	var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+	velocity.y += gravity * delta
+	move_and_slide()
 
-func bounce(direction: int = 0):
+func handle_jump(force = JUMP_FORCE):
+	$SoundJump.play()
+	velocity.y = JUMP_FORCE
+
+func handle_move_x(delta, speed = MOV_SPEED):
+	var step = 0.1 if velocity.x < speed else 0.03
+	if direction == -1:
+		$Sprite2D.set_flip_h(true)
+	elif direction == 1:
+		$Sprite2D.set_flip_h(false)
+	velocity.x = lerp(velocity.x, float(speed * direction), step)
+
+func handle_stop_x(delta):
+	velocity.x = lerp(velocity.x, 0.0, 0.1)
+
+func bounce(bounce_direction: int = 0):
 	velocity.y = JUMP_FORCE * 0.5
-	velocity.x = MOV_SPEED * direction * 3
+	velocity.x = MOV_SPEED * bounce_direction * 3
 
-func ouch(direction: int):
+func ouch(bounce_direction: int):
 	$Timer.start()
 	$AnimationPlayer.play("flash")
 	$SoundOuch.play()
-	bounce(direction)
+	bounce(bounce_direction)
 	Input.action_release("ui_left")
 	Input.action_release("ui_right")
 
